@@ -37,6 +37,9 @@ def _send_registration_email(to_email, username, raw_password, role_label):
             "Please keep these credentials safe."
         )
         from_email = getattr(settings, "DEFAULT_FROM_EMAIL", "no-reply@gatepass.local")
+        
+        # Send email with fail_silently=True to prevent blocking if email fails
+        # EMAIL_TIMEOUT is set in settings to prevent hanging connections
         send_mail(subject, message, from_email, [to_email], fail_silently=True)
     except Exception as e:
         # Log error but don't crash the registration process
