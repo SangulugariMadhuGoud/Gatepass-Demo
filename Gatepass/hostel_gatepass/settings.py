@@ -188,11 +188,20 @@ CORS_ALLOW_ALL_ORIGINS = True
 # Set to a very high number to handle large bulk deletions
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 50000
 
-# Email settings (default sender)
+# Email settings
 DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", "no-reply@gmail.com")
 
-# Local email backend (prints to console). Override via env EMAIL_BACKEND for real SMTP.
+# Email backend configuration
+# Default to console in development, SMTP in production if credentials are provided
 EMAIL_BACKEND = os.environ.get(
     "EMAIL_BACKEND",
-    "django.core.mail.backends.console.EmailBackend"
+    "django.core.mail.backends.smtp.EmailBackend" if os.environ.get("EMAIL_HOST") else "django.core.mail.backends.console.EmailBackend"
 )
+
+# SMTP settings (only used if EMAIL_BACKEND is set to SMTP)
+EMAIL_HOST = os.environ.get("EMAIL_HOST", "smtp.gmail.com")
+EMAIL_PORT = int(os.environ.get("EMAIL_PORT", "587"))
+EMAIL_USE_TLS = os.environ.get("EMAIL_USE_TLS", "True").lower() == "true"
+EMAIL_USE_SSL = os.environ.get("EMAIL_USE_SSL", "False").lower() == "true"
+EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "")
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "")
