@@ -197,11 +197,17 @@ EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "")
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "")
 has_email_credentials = EMAIL_HOST_USER and EMAIL_HOST_PASSWORD
 
-# Default to console in development, SMTP in production if credentials are provided
+# Email backend configuration
+# If EMAIL_BACKEND is explicitly set, use it (but still check credentials in the email function)
+# Otherwise, use SMTP if credentials exist, console if not
 EMAIL_BACKEND = os.environ.get(
     "EMAIL_BACKEND",
     "django.core.mail.backends.smtp.EmailBackend" if has_email_credentials else "django.core.mail.backends.console.EmailBackend"
 )
+
+# If SMTP backend is selected but no credentials, fall back to console
+if "smtp" in EMAIL_BACKEND.lower() and not has_email_credentials:
+    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 # SMTP settings (only used if EMAIL_BACKEND is set to SMTP)
 EMAIL_HOST = os.environ.get("EMAIL_HOST", "smtp.gmail.com")

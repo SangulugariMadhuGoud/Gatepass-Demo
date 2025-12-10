@@ -25,9 +25,31 @@ from .forms import (
 
 def _send_registration_email(to_email, username, raw_password, role_label):
     """Send credentials to the registered user's email. Fails silently if email is not configured."""
+    import logging
+    logger = logging.getLogger(__name__)
+    
     if not to_email:
+        logger.warning("Registration email not sent: No email address provided")
         return
+    
     try:
+        # Check if email is properly configured
+        email_backend = getattr(settings, "EMAIL_BACKEND", "")
+        email_host_user = getattr(settings, "EMAIL_HOST_USER", "")
+        email_host_password = getattr(settings, "EMAIL_HOST_PASSWORD", "")
+        
+        # Log email configuration status
+        if "console" in email_backend.lower():
+            logger.info(f"Registration email (console mode - not sent): {to_email} | Username: {username}")
+            return
+        elif not email_host_user or not email_host_password:
+            logger.warning(
+                f"Registration email not sent: SMTP credentials not configured. "
+                f"EMAIL_HOST_USER: {'SET' if email_host_user else 'NOT SET'}, "
+                f"EMAIL_HOST_PASSWORD: {'SET' if email_host_password else 'NOT SET'}"
+            )
+            return
+        
         subject = "Gatepass Account Details"
         message = (
             f"Your {role_label} account has been registered.\n\n"
@@ -40,12 +62,14 @@ def _send_registration_email(to_email, username, raw_password, role_label):
         
         # Send email with fail_silently=True to prevent blocking if email fails
         # EMAIL_TIMEOUT is set in settings to prevent hanging connections
-        send_mail(subject, message, from_email, [to_email], fail_silently=True)
+        result = send_mail(subject, message, from_email, [to_email], fail_silently=True)
+        if result:
+            logger.info(f"Registration email sent successfully to {to_email}")
+        else:
+            logger.error(f"Registration email failed to send to {to_email} (send_mail returned 0)")
     except Exception as e:
         # Log error but don't crash the registration process
-        import logging
-        logger = logging.getLogger(__name__)
-        logger.error(f"Failed to send registration email to {to_email}: {str(e)}")
+        logger.error(f"Failed to send registration email to {to_email}: {str(e)}", exc_info=True)
         # Registration continues even if email fails
 
 
