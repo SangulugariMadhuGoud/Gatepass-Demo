@@ -27,16 +27,23 @@ def _send_registration_email(to_email, username, raw_password, role_label):
     """Send credentials to the registered user's email. Fails silently if email is not configured."""
     if not to_email:
         return
-    subject = "Gatepass Account Details"
-    message = (
-        f"Your {role_label} account has been registered.\n\n"
-        f"Username: {username}\n"
-        f"Password: {raw_password}\n"
-        f"Email: {to_email}\n\n"
-        "Please keep these credentials safe."
-    )
-    from_email = getattr(settings, "DEFAULT_FROM_EMAIL", "no-reply@gatepass.local")
-    send_mail(subject, message, from_email, [to_email], fail_silently=True)
+    try:
+        subject = "Gatepass Account Details"
+        message = (
+            f"Your {role_label} account has been registered.\n\n"
+            f"Username: {username}\n"
+            f"Password: {raw_password}\n"
+            f"Email: {to_email}\n\n"
+            "Please keep these credentials safe."
+        )
+        from_email = getattr(settings, "DEFAULT_FROM_EMAIL", "no-reply@gatepass.local")
+        send_mail(subject, message, from_email, [to_email], fail_silently=True)
+    except Exception as e:
+        # Log error but don't crash the registration process
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.error(f"Failed to send registration email to {to_email}: {str(e)}")
+        # Registration continues even if email fails
 
 
 def home(request):
@@ -214,27 +221,37 @@ def register(request):
         elif role == 'security':
             form = SecurityRegistrationForm(request.POST)
             if form.is_valid():
-                with transaction.atomic():
-                    data = form.cleaned_data
-                    raw_password = data['password1']
-                    user = User.objects.create_user(
-                        username=data['username'],
-                        email=data['email'],
-                        password=raw_password,
-                        role='security',
-                        mobile_number=data.get('mobile_number') or None,
-                        first_name=data['first_name'],
-                        last_name=data['last_name'],
-                        is_approved=False
-                    )
-                    Security.objects.create(
-                        user=user,
-                        name=f"{data['first_name']} {data['last_name']}",
-                        shift=data.get('shift', '')
-                    )
-                    _send_registration_email(user.email, user.username, raw_password, "security")
-                    messages.success(request, 'Registration successful! Please wait for admin approval.')
-                    return redirect('login')
+                try:
+                    with transaction.atomic():
+                        data = form.cleaned_data
+                        raw_password = data['password1']
+                        user = User.objects.create_user(
+                            username=data['username'],
+                            email=data['email'],
+                            password=raw_password,
+                            role='security',
+                            mobile_number=data.get('mobile_number') or None,
+                            first_name=data['first_name'],
+                            last_name=data['last_name'],
+                            is_approved=False
+                        )
+                        Security.objects.create(
+                            user=user,
+                            name=f"{data['first_name']} {data['last_name']}",
+                            shift=data.get('shift', '')
+                        )
+                        _send_registration_email(user.email, user.username, raw_password, "security")
+                        messages.success(request, 'Registration successful! Please wait for admin approval.')
+                        return redirect('login')
+                except Exception as e:
+                    # Handle rare DB edge cases (e.g., race for username/email)
+                    messages.error(request, 'A user with this Username, Email, or Mobile already exists, or another unexpected error happened. Please check and try again.')
+            else:
+                # Show all form errors as toasts (frontend renders inline errors as well)
+                for field, errors in form.errors.items():
+                    label = form.fields[field].label if field in form.fields else field
+                    for error in errors:
+                        messages.error(request, f"{label}: {error}")
             context['security_form'] = form
     else:
         # GET - initialize all forms to support single form with role dropdown
