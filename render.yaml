@@ -3,8 +3,9 @@ services:
     name: gatepass-django
     env: python
     plan: free
-    buildCommand: cd Gatepass && pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate --noinput && python manage.py create_superuser_if_not_exists --noinput
-    startCommand: cd Gatepass && gunicorn hostel_gatepass.wsgi:application --bind 0.0.0.0:$PORT
+    rootDir: Gatepass
+    buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate --noinput && python manage.py create_superuser_if_not_exists --noinput
+    startCommand: gunicorn hostel_gatepass.wsgi:application --bind 0.0.0.0:$PORT
     envVars:
       - key: DEBUG
         value: False
