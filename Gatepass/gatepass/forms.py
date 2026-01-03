@@ -23,17 +23,17 @@ class StudentRegistrationForm(forms.ModelForm):
         widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Re-enter password'})
     )
     email = forms.EmailField(
-        required=False,
+        required=True,
         widget=forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'name@example.com'})
     )
     mobile_number = forms.CharField(
-        required=False,
+        required=True,
         max_length=10,
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': '10-digit mobile (optional)'})
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': '10-digit mobile'})
     )
     gender = forms.ChoiceField(
-        required=False,
-        choices=[('', 'Select Gender'), ('M', 'Male'), ('F', 'Female')],
+        required=True,
+        choices=[('M', 'Male'), ('F', 'Female')],
         widget=forms.Select(attrs={'class': 'form-select'})
     )
     
@@ -61,22 +61,17 @@ class StudentRegistrationForm(forms.ModelForm):
             'parent_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Parent/Guardian name'}),
             'parent_mobile': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '10-digit parent mobile'}),
         }
-    
+
     def clean(self):
         cleaned_data = super().clean()
         password1 = cleaned_data.get('password1')
         password2 = cleaned_data.get('password2')
-        mobile_number = cleaned_data.get('mobile_number')
-        
+
         if password1 and password2 and password1 != password2:
             raise ValidationError("Passwords don't match")
-        
-        # Handle empty mobile number
-        if mobile_number == '':
-            cleaned_data['mobile_number'] = None
-        
+
         return cleaned_data
-    
+
     def clean_hall_ticket_no(self):
         hall_ticket_no = self.cleaned_data.get('hall_ticket_no')
         if Student.objects.filter(hall_ticket_no=hall_ticket_no).exists():
@@ -116,34 +111,34 @@ class WardenRegistrationForm(forms.ModelForm):
         label='Confirm Password',
         widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Re-enter password'})
     )
-    
+    gender = forms.ChoiceField(
+        required=True,
+        choices=[('M', 'Male'), ('F', 'Female')],
+        widget=forms.Select(attrs={'class': 'form-select'})
+    )
+
     class Meta:
         model = User
         fields = ['username', 'email', 'mobile_number', 'gender', 'first_name', 'last_name']
         widgets = {
             'username': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Choose a username'}),
             'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'name@example.com'}),
-            'mobile_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '10-digit mobile (optional)'}),
+            'mobile_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '10-digit mobile'}),
             'gender': forms.Select(attrs={'class': 'form-select'}),
             'first_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'First name'}),
             'last_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Last name'}),
         }
-    
+
     def clean(self):
         cleaned_data = super().clean()
         password1 = cleaned_data.get('password1')
         password2 = cleaned_data.get('password2')
-        mobile_number = cleaned_data.get('mobile_number')
-        
+
         if password1 and password2 and password1 != password2:
             raise ValidationError("Passwords don't match")
-        
-        # Handle empty mobile number
-        if mobile_number == '':
-            cleaned_data['mobile_number'] = None
-        
+
         return cleaned_data
-    
+
     def clean_mobile_number(self):
         mobile_number = self.cleaned_data.get('mobile_number')
         if mobile_number and User.objects.filter(mobile_number=mobile_number).exists():
@@ -171,13 +166,18 @@ class SecurityRegistrationForm(forms.ModelForm):
         label='Confirm Password',
         widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Re-enter password'})
     )
+    gender = forms.ChoiceField(
+        required=True,
+        choices=[('M', 'Male'), ('F', 'Female')],
+        widget=forms.Select(attrs={'class': 'form-select'})
+    )
     class Meta:
         model = User
         fields = ['username', 'email', 'mobile_number', 'first_name', 'last_name', 'shift']
         widgets = {
             'username': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Choose a username'}),
             'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'name@example.com'}),
-            'mobile_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '10-digit mobile (optional)'}),
+            'mobile_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '10-digit mobile'}),
             'first_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'First name'}),
             'last_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Last name'}),
         }
@@ -185,11 +185,8 @@ class SecurityRegistrationForm(forms.ModelForm):
         cleaned_data = super().clean()
         password1 = cleaned_data.get('password1')
         password2 = cleaned_data.get('password2')
-        mobile_number = cleaned_data.get('mobile_number')
         if password1 and password2 and password1 != password2:
             raise ValidationError("Passwords don't match")
-        if mobile_number == '':
-            cleaned_data['mobile_number'] = None
         return cleaned_data
     def clean_mobile_number(self):
         mobile_number = self.cleaned_data.get('mobile_number')
