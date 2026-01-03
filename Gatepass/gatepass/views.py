@@ -779,27 +779,27 @@ def warden_dashboard(request):
     if request.user.role != 'warden':
         messages.error(request, 'Access denied.')
         return redirect('home')
-    
+
     # Check for overdue returns
     check_overdue_returns()
-    
+
     # Initialize filter form
     filter_form = WardenDateFilterForm(request.GET)
-    
+
     # Get all gatepass requests for filtering
     all_requests = GatePass.objects.all().order_by('-created_at')
-    
+
     # CRITICAL: Gender-based filtering ensures strict separation
     # - Male wardens see ONLY male student requests (NOT female student requests)
     # - Female wardens see ONLY female student requests (NOT male student requests)
     # - Wardens without gender set will see NO requests (safety measure)
     # - Students without gender set will NOT appear for any warden
-    
+
     # Get and validate warden gender
     warden_gender = request.user.gender
     if warden_gender:
         warden_gender = str(warden_gender).strip().upper()
-    
+
     # Apply strict gender filtering - THIS MUST BE APPLIED BEFORE ANY OTHER FILTERS
     if warden_gender in ['M', 'F']:
         # CRITICAL: Filter to show ONLY requests from students with EXACT matching gender
@@ -815,59 +815,70 @@ def warden_dashboard(request):
         ).exclude(
             student__user__gender=''
         )
-        
+
         # Additional safety check: Ensure we only get matching gender
         # This is redundant but ensures the filter is absolutely correct
     else:
         # If warden gender is not set or invalid, show no requests (safety measure)
         all_requests = GatePass.objects.none()
-    
+
+    # Apply search filter
+    search_query = request.GET.get('search', '').strip()
+    if search_query:
+        all_requests = all_requests.filter(
+            Q(student__student_name__icontains=search_query) |
+            Q(student__hall_ticket_no__icontains=search_query) |
+            Q(student__room_no__icontains=search_query) |
+            Q(purpose__icontains=search_query)
+        )
+
     # Apply date and status filters
     if filter_form.is_valid():
         from_date = filter_form.cleaned_data.get('from_date')
         to_date = filter_form.cleaned_data.get('to_date')
         status_filter = filter_form.cleaned_data.get('status_filter')
-        
+
         if from_date:
             all_requests = all_requests.filter(outing_date__gte=from_date)
         if to_date:
             all_requests = all_requests.filter(outing_date__lte=to_date)
         if status_filter:
             all_requests = all_requests.filter(status=status_filter)
-    
+
     # Get pending gatepass requests
     pending_requests = all_requests.filter(status='pending')
-    
+
     # Get approved requests (both by this warden and all approved)
     approved_requests = all_requests.filter(status='warden_approved')[:10]
-    
+
     # Get rejected requests by this warden
     rejected_requests = all_requests.filter(
         status='warden_rejected',
         warden_approval=request.user
     )[:10]
-    
+
     # Get returned requests (students who have returned)
     returned_requests = all_requests.filter(status='returned')[:10]
-    
+
     # Get students currently out
     students_out_requests = all_requests.filter(status='security_approved')[:10]
-    
+
     # Get statistics (use filtered data for consistency)
     total_pending = all_requests.filter(status='pending').count()
     total_approved = all_requests.filter(status='warden_approved').count()
     total_rejected = all_requests.filter(warden_approval=request.user, status='warden_rejected').count()
     total_returned = all_requests.filter(status='returned').count()
     students_out = all_requests.filter(status='security_approved').count()
-    
+
     # Get filtered counts for display
     filtered_count = all_requests.count()
-    
+
     # Get recent notifications
     notifications = Notification.objects.filter(user=request.user).order_by('-created_at')[:5]
-    
+
     context = {
         'filter_form': filter_form,
+        'search_query': search_query,
         'pending_requests': pending_requests,
         'approved_requests': approved_requests,
         'rejected_requests': rejected_requests,
@@ -979,37 +990,72 @@ def security_dashboard(request):
     if request.user.role != 'security':
         messages.error(request, 'Access denied.')
         return redirect('home')
-    
+
     # Check for overdue returns
     check_overdue_returns()
-    
+
+    # Get search query
+    search_query = request.GET.get('search', '').strip()
+
     # Get approved gatepasses waiting for security approval
     # All security personnel (both Morning and Night shifts) can see all pending requests
     approved_requests = GatePass.objects.filter(
         status='warden_approved'
     ).order_by('-created_at')
-    
+
+    # Apply search filter to approved requests
+    if search_query:
+        approved_requests = approved_requests.filter(
+            Q(student__student_name__icontains=search_query) |
+            Q(student__hall_ticket_no__icontains=search_query) |
+            Q(student__room_no__icontains=search_query) |
+            Q(purpose__icontains=search_query)
+        )
+
     # Get security approved requests (students who have left but not returned)
     # Show all security_approved requests so both shifts can see real-time updates
     security_approved = GatePass.objects.filter(
         status='security_approved'
-    ).order_by('-created_at')[:10]
-    
+    ).order_by('-created_at')
+
+    # Apply search filter to security approved requests
+    if search_query:
+        security_approved = security_approved.filter(
+            Q(student__student_name__icontains=search_query) |
+            Q(student__hall_ticket_no__icontains=search_query) |
+            Q(student__room_no__icontains=search_query) |
+            Q(purpose__icontains=search_query)
+        )[:10]
+    else:
+        security_approved = security_approved[:10]
+
     # Get returned requests
     # Show all returned requests so both shifts can see real-time updates
     returned_requests = GatePass.objects.filter(
         status='returned'
-    ).order_by('-created_at')[:10]
-    
+    ).order_by('-created_at')
+
+    # Apply search filter to returned requests
+    if search_query:
+        returned_requests = returned_requests.filter(
+            Q(student__student_name__icontains=search_query) |
+            Q(student__hall_ticket_no__icontains=search_query) |
+            Q(student__room_no__icontains=search_query) |
+            Q(purpose__icontains=search_query)
+        )[:10]
+    else:
+        returned_requests = returned_requests[:10]
+
     # Get statistics - count all records (not filtered by current user)
     total_pending = approved_requests.count()
     total_approved = GatePass.objects.filter(status='security_approved').count()
     total_returned = GatePass.objects.filter(status='returned').count()
-    
+
     # Get recent notifications
     notifications = Notification.objects.filter(user=request.user).order_by('-created_at')[:5]
-    
+
     context = {
+        'search_query': search_query,
         'approved_requests': approved_requests,
         'security_approved': security_approved,
         'returned_requests': returned_requests,
@@ -1062,23 +1108,35 @@ def superadmin_dashboard(request):
     if request.user.role != 'superadmin':
         messages.error(request, 'Access denied.')
         return redirect('home')
-    
+
     # Check for overdue returns
     check_overdue_returns()
-    
+
+    # Get search query
+    search_query = request.GET.get('search', '').strip()
+
     # Get pending user approvals
     pending_users = User.objects.filter(is_approved=False).exclude(role='superadmin')
-    
+
     # Get overdue returns
     from datetime import date
     overdue_returns = GatePass.objects.filter(
         status='security_approved',
         expected_return_date__lt=date.today()
     ).order_by('expected_return_date')
-    
+
     # Get all pending gatepass requests for superadmin approval
     pending_gatepass_approvals = GatePass.objects.filter(status='pending').order_by('-created_at')
-    
+
+    # Apply search filter to pending gatepass approvals
+    if search_query:
+        pending_gatepass_approvals = pending_gatepass_approvals.filter(
+            Q(student__student_name__icontains=search_query) |
+            Q(student__hall_ticket_no__icontains=search_query) |
+            Q(student__room_no__icontains=search_query) |
+            Q(purpose__icontains=search_query)
+        )
+
     # Get statistics
     total_students = User.objects.filter(role='student').count()
     total_wardens = User.objects.filter(role='warden').count()
@@ -1086,14 +1144,15 @@ def superadmin_dashboard(request):
     total_gatepasses = GatePass.objects.count()
     pending_gatepasses = GatePass.objects.filter(status='pending').count()
     overdue_count = overdue_returns.count()
-    
+
     # Get recent gatepass requests
     recent_gatepasses = GatePass.objects.order_by('-created_at')[:10]
-    
+
     # Get recent notifications
     notifications = Notification.objects.order_by('-created_at')[:10]
-    
+
     context = {
+        'search_query': search_query,
         'pending_users': pending_users,
         'overdue_returns': overdue_returns,
         'pending_gatepass_approvals': pending_gatepass_approvals,

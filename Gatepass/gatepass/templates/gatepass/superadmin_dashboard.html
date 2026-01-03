@@ -152,6 +152,22 @@
                 <h5 class="fw-bold"><i class="fas fa-inbox me-2 text-info"></i>Pending Gatepass Approvals</h5>
             </div>
             <div class="card-body">
+                <!-- Search Section -->
+                <form method="get" class="row g-3 align-items-end mb-4">
+                    <div class="col-md-8">
+                        <label for="search" class="form-label fw-bold"><i class="fas fa-search me-1"></i>Search Gatepasses</label>
+                        <input type="text" class="form-control" id="search" name="search" value="{{ search_query }}" placeholder="Search by student name, hall ticket, room number, or purpose...">
+                    </div>
+                    <div class="col-md-4">
+                        <button type="submit" class="btn btn-primary w-100"><i class="fas fa-search me-1"></i>Search</button>
+                    </div>
+                </form>
+                {% if search_query %}
+                <div class="mb-3 d-flex align-items-center gap-2">
+                    <span class="badge bg-primary-light text-primary">Search: "{{ search_query }}"</span>
+                    <button type="button" onclick="clearSearch()" class="btn btn-sm btn-outline-secondary"><i class="fas fa-times me-1"></i>Clear</button>
+                </div>
+                {% endif %}
                 {% if pending_gatepass_approvals %}
                     <div class="table-responsive">
                         <table class="table table-hover align-middle">
@@ -259,4 +275,12 @@
         </div>
     </div>
 </div>
+
+<script>
+function clearSearch() {
+    // Clear the search input and submit the form to reset
+    document.getElementById('search').value = '';
+    document.querySelector('form').submit();
+}
+</script>
 {% endblock %}
