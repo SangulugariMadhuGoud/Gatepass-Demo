@@ -1,0 +1,400 @@
+{% extends 'gatepass/base.html' %}
+
+{% block title %}Create Gatepass Request - Hostel Gatepass System{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4 p-md-5">
+                    <div class="text-center mb-4">
+                        <h2 class="fw-bold">Create Gatepass Request</h2>
+                        <p class="text-muted">Follow the steps to submit your request.</p>
+                    </div>
+
+                    <!-- Wizard Tabs -->
+                    <nav class="mb-4">
+                        <div class="nav nav-pills nav-fill wizard-tabs" id="nav-tab" role="tablist">
+                            <button class="nav-link active" id="nav-step1-tab" data-bs-toggle="tab" data-bs-target="#nav-step1" type="button" role="tab" aria-controls="nav-step1" aria-selected="true">
+                                <i class="fas fa-user-check me-2"></i>Step 1: Verify Details
+                            </button>
+                            <button class="nav-link disabled" id="nav-step2-tab" data-bs-toggle="tab" data-bs-target="#nav-step2" type="button" role="tab" aria-controls="nav-step2" aria-selected="false">
+                                <i class="fas fa-calendar-alt me-2"></i>Step 2: Outing Details
+                            </button>
+                        </div>
+                    </nav>
+
+                    <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+                        {% csrf_token %}
+                        <div class="tab-content" id="nav-tabContent">
+                            <!-- Step 1: Verify Details -->
+                            <div class="tab-pane fade show active" id="nav-step1" role="tabpanel" aria-labelledby="nav-step1-tab">
+                                <h4 class="mb-3">Your Information</h4>
+                                <p class="text-muted mb-4">Please verify your details are correct. If anything is wrong, contact the hostel office.</p>
+                                
+                                <div class="card bg-light border-0 mb-4">
+                                    <div class="card-body">
+                                        <div class="row gy-3">
+                                            <div class="col-md-6">
+                                                <div class="text-muted small">Name</div>
+                                                <div class="fw-bold">{{ student.student_name }}</div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="text-muted small">Hall Ticket</div>
+                                                <div>{{ student.hall_ticket_no }}</div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="text-muted small">Room No</div>
+                                                <div>{{ student.room_no }}</div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="text-muted small">Parent Contact</div>
+                                                <div>{{ student.parent_name }} ({{ student.parent_mobile }})</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="d-flex justify-content-end mt-4">
+                                    <button type="button" class="btn btn-primary rounded-pill px-4 py-2" id="next-step-btn">
+                                        Next <i class="fas fa-arrow-right ms-2"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Step 2: Outing Details -->
+                            <div class="tab-pane fade" id="nav-step2" role="tabpanel" aria-labelledby="nav-step2-tab">
+                                <h4 class="mb-3">Outing Details</h4>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label for="{{ form.outing_date.id_for_label }}" class="form-label">Outing Date *</label>
+                                        {{ form.outing_date }}
+                                        <div class="invalid-feedback">Please select a valid outing date.</div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Outing Time *</label>
+                                        <div class="row g-2">
+                                            <div class="col-5">
+                                                <label for="{{ form.outing_hour.id_for_label }}" class="visually-hidden">Outing Hour</label>
+                                                {{ form.outing_hour }}
+                                            </div>
+                                            <div class="col-5">
+                                                <label for="{{ form.outing_minute.id_for_label }}" class="visually-hidden">Outing Minute</label>
+                                                {{ form.outing_minute }}
+                                            </div>
+                                            <div class="col-2">
+                                                <label for="{{ form.outing_ampm.id_for_label }}" class="visually-hidden">AM/PM</label>
+                                                {{ form.outing_ampm }}
+                                            </div>
+                                        </div>
+                                        {% if form.outing_hour.errors %}
+                                            <div class="text-danger"><small>{{ form.outing_hour.errors.0 }}</small></div>
+                                        {% endif %}
+                                        {% if form.outing_minute.errors %}
+                                            <div class="text-danger"><small>{{ form.outing_minute.errors.0 }}</small></div>
+                                        {% endif %}
+                                        {% if form.outing_ampm.errors %}
+                                            <div class="text-danger"><small>{{ form.outing_ampm.errors.0 }}</small></div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="{{ form.expected_return_date.id_for_label }}" class="form-label">Expected Return Date *</label>
+                                        {{ form.expected_return_date }}
+                                        <div class="invalid-feedback">Please select a valid return date.</div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Expected Return Time *</label>
+                                        <div class="row g-2">
+                                            <div class="col-5">
+                                                <label for="{{ form.expected_return_hour.id_for_label }}" class="visually-hidden">Expected Return Hour</label>
+                                                {{ form.expected_return_hour }}
+                                            </div>
+                                            <div class="col-5">
+                                                <label for="{{ form.expected_return_minute.id_for_label }}" class="visually-hidden">Expected Return Minute</label>
+                                                {{ form.expected_return_minute }}
+                                            </div>
+                                            <div class="col-2">
+                                                <label for="{{ form.expected_return_ampm.id_for_label }}" class="visually-hidden">AM/PM</label>
+                                                {{ form.expected_return_ampm }}
+                                            </div>
+                                        </div>
+                                        {% if form.expected_return_hour.errors %}
+                                            <div class="text-danger"><small>{{ form.expected_return_hour.errors.0 }}</small></div>
+                                        {% endif %}
+                                        {% if form.expected_return_minute.errors %}
+                                            <div class="text-danger"><small>{{ form.expected_return_minute.errors.0 }}</small></div>
+                                        {% endif %}
+                                        {% if form.expected_return_ampm.errors %}
+                                            <div class="text-danger"><small>{{ form.expected_return_ampm.errors.0 }}</small></div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-12">
+                                        <label for="{{ form.purpose.id_for_label }}" class="form-label">Purpose of Outing</label>
+                                        {{ form.purpose }}
+                                    </div>
+                                    <div class="col-12">
+                                        <label for="{{ form.photo.id_for_label }}" class="form-label">Capture or Upload Your Photo *</label>
+
+                                        <!-- Camera and Upload Options -->
+                                        <div class="mb-3">
+                                            <div class="btn-group w-100" role="group">
+                                                <input type="radio" class="btn-check" name="photo-option" id="camera-option" autocomplete="off" checked>
+                                                <label class="btn btn-outline-primary" for="camera-option">
+                                                    <i class="fas fa-camera me-2"></i>Take Photo
+                                                </label>
+
+                                                <input type="radio" class="btn-check" name="photo-option" id="upload-option" autocomplete="off">
+                                                <label class="btn btn-outline-secondary" for="upload-option">
+                                                    <i class="fas fa-upload me-2"></i>Upload Photo
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        <!-- Camera Capture Section -->
+                                        <div id="camera-section" class="mb-3">
+                                            <div class="text-center">
+                                                <video id="camera-stream" class="img-fluid rounded border" style="max-width: 100%; max-height: 300px; display: none;"></video>
+                                                <canvas id="camera-canvas" style="display: none;"></canvas>
+                                                <div id="camera-placeholder" class="border rounded p-4 bg-light">
+                                                    <i class="fas fa-camera fa-3x text-muted mb-3"></i>
+                                                    <p class="text-muted">Camera will appear here</p>
+                                                </div>
+                                            </div>
+                                            <div class="d-flex justify-content-center gap-2 mt-3">
+                                                <button type="button" id="start-camera" class="btn btn-primary">
+                                                    <i class="fas fa-play me-2"></i>Start Camera
+                                                </button>
+                                                <button type="button" id="capture-photo" class="btn btn-success" style="display: none;">
+                                                    <i class="fas fa-camera me-2"></i>Capture Photo
+                                                </button>
+                                                <button type="button" id="retake-photo" class="btn btn-warning" style="display: none;">
+                                                    <i class="fas fa-redo me-2"></i>Retake
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <!-- File Upload Section -->
+                                        <div id="upload-section" class="mb-3" style="display: none;">
+                                            {{ form.photo }}
+                                        </div>
+
+                                        {% if form.photo.help_text %}
+                                            <small class="form-text text-muted">{{ form.photo.help_text }}</small>
+                                        {% endif %}
+                                        {% if form.photo.errors %}
+                                            <div class="text-danger"><small>{{ form.photo.errors.0 }}</small></div>
+                                        {% endif %}
+
+                                        <!-- Photo Preview -->
+                                        <div id="photo-preview" class="mt-3 text-center" style="display: none;">
+                                            <h6>Captured Photo:</h6>
+                                            <img id="preview-img" src="" alt="Photo preview" class="img-thumbnail" style="max-width: 300px; max-height: 300px;">
+                                            <p class="text-muted mt-2">This photo will be submitted with your gatepass request.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            
+                                <div class="alert alert-warning border-0 mt-4">
+                                    <div class="d-flex">
+                                        <i class="fas fa-exclamation-triangle me-3 mt-1"></i>
+                                        <div>
+                                            <strong>Important:</strong> A verification code will be sent to your parent at <strong>{{ student.parent_mobile }}</strong>. Please ensure this is correct.
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="d-flex justify-content-between align-items-center mt-4">
+                                    <button type="button" class="btn btn-outline-secondary rounded-pill px-4 py-2" id="back-step-btn">
+                                        <i class="fas fa-arrow-left me-2"></i>Back
+                                    </button>
+                                    <button type="submit" class="btn btn-primary rounded-pill px-4 py-2">
+                                        Submit Request <i class="fas fa-paper-plane ms-2"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const step1Tab = new bootstrap.Tab(document.getElementById('nav-step1-tab'));
+    const step2Tab = new bootstrap.Tab(document.getElementById('nav-step2-tab'));
+    const nextBtn = document.getElementById('next-step-btn');
+    const backBtn = document.getElementById('back-step-btn');
+    const step2TabLink = document.getElementById('nav-step2-tab');
+
+    nextBtn.addEventListener('click', function() {
+        step2TabLink.classList.remove('disabled');
+        step2Tab.show();
+    });
+
+    backBtn.addEventListener('click', function() {
+        step1Tab.show();
+    });
+
+    // Bootstrap form validation
+    const forms = document.querySelectorAll('.needs-validation');
+    Array.prototype.slice.call(forms).forEach(function(form) {
+        form.addEventListener('submit', function(event) {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+        }, false);
+    });
+
+    // Camera and Photo Upload Functionality
+    let stream = null;
+    let capturedImageData = null;
+
+    const cameraOption = document.getElementById('camera-option');
+    const uploadOption = document.getElementById('upload-option');
+    const cameraSection = document.getElementById('camera-section');
+    const uploadSection = document.getElementById('upload-section');
+    const cameraStream = document.getElementById('camera-stream');
+    const cameraCanvas = document.getElementById('camera-canvas');
+    const cameraPlaceholder = document.getElementById('camera-placeholder');
+    const startCameraBtn = document.getElementById('start-camera');
+    const capturePhotoBtn = document.getElementById('capture-photo');
+    const retakePhotoBtn = document.getElementById('retake-photo');
+    const photoPreview = document.getElementById('photo-preview');
+    const previewImg = document.getElementById('preview-img');
+    const photoInput = document.querySelector('input[name="photo"]');
+
+    // Toggle between camera and upload options
+    cameraOption.addEventListener('change', function() {
+        if (this.checked) {
+            cameraSection.style.display = 'block';
+            uploadSection.style.display = 'none';
+            stopCamera();
+            resetCameraUI();
+        }
+    });
+
+    uploadOption.addEventListener('change', function() {
+        if (this.checked) {
+            cameraSection.style.display = 'none';
+            uploadSection.style.display = 'block';
+            stopCamera();
+            resetCameraUI();
+            photoPreview.style.display = 'none';
+            capturedImageData = null;
+        }
+    });
+
+    // Start camera
+    startCameraBtn.addEventListener('click', async function() {
+        try {
+            stream = await navigator.mediaDevices.getUserMedia({
+                video: { facingMode: 'user' },
+                audio: false
+            });
+
+            cameraStream.srcObject = stream;
+            cameraStream.style.display = 'block';
+            cameraPlaceholder.style.display = 'none';
+            startCameraBtn.style.display = 'none';
+            capturePhotoBtn.style.display = 'inline-block';
+
+            // Wait for video to load
+            cameraStream.onloadedmetadata = function() {
+                cameraStream.play();
+            };
+        } catch (error) {
+            console.error('Error accessing camera:', error);
+            alert('Unable to access camera. Please check your camera permissions and try again.');
+        }
+    });
+
+    // Capture photo
+    capturePhotoBtn.addEventListener('click', function() {
+        if (!stream) return;
+
+        const context = cameraCanvas.getContext('2d');
+        cameraCanvas.width = cameraStream.videoWidth;
+        cameraCanvas.height = cameraStream.videoHeight;
+        context.drawImage(cameraStream, 0, 0, cameraCanvas.width, cameraCanvas.height);
+
+        // Convert canvas to blob
+        cameraCanvas.toBlob(function(blob) {
+            capturedImageData = blob;
+
+            // Create a data URL for preview
+            const dataURL = cameraCanvas.toDataURL('image/jpeg', 0.8);
+            previewImg.src = dataURL;
+            photoPreview.style.display = 'block';
+
+            // Create a File object from the blob
+            const file = new File([blob], 'captured_photo.jpg', { type: 'image/jpeg' });
+
+            // Create a DataTransfer to set the file input
+            const dt = new DataTransfer();
+            dt.items.add(file);
+            photoInput.files = dt.files;
+
+            // Update UI
+            capturePhotoBtn.style.display = 'none';
+            retakePhotoBtn.style.display = 'inline-block';
+            stopCamera();
+        }, 'image/jpeg', 0.8);
+    });
+
+    // Retake photo
+    retakePhotoBtn.addEventListener('click', function() {
+        resetCameraUI();
+        photoPreview.style.display = 'none';
+        capturedImageData = null;
+        photoInput.value = '';
+    });
+
+    // Stop camera function
+    function stopCamera() {
+        if (stream) {
+            stream.getTracks().forEach(track => track.stop());
+            stream = null;
+        }
+        cameraStream.style.display = 'none';
+        cameraStream.srcObject = null;
+    }
+
+    // Reset camera UI
+    function resetCameraUI() {
+        cameraPlaceholder.style.display = 'block';
+        startCameraBtn.style.display = 'inline-block';
+        capturePhotoBtn.style.display = 'none';
+        retakePhotoBtn.style.display = 'none';
+        stopCamera();
+    }
+
+    // File upload preview functionality
+    const fileInput = uploadSection.querySelector('input[type="file"]');
+    if (fileInput) {
+        fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImg.src = e.target.result;
+                    photoPreview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                photoPreview.style.display = 'none';
+            }
+        });
+    }
+
+    // Cleanup on page unload
+    window.addEventListener('beforeunload', function() {
+        stopCamera();
+    });
+});
+</script>
+{% endblock %}
