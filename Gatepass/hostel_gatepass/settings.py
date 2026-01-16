@@ -109,6 +109,12 @@ if not os.environ.get("DATABASE_URL"):
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
             'NAME': BASE_DIR / 'db.sqlite3',
+            'CONN_MAX_AGE': 0,  # Disable persistent connections for SQLite
+            'OPTIONS': {
+                'timeout': 60,  # Increase SQLite timeout to 60 seconds for database locks
+                'isolation_level': None,  # Autocommit mode
+                'check_same_thread': False,  # Allow multi-threaded access
+            }
         }
     }
 else:

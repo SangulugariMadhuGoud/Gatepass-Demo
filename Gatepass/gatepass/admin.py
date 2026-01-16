@@ -2,7 +2,13 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.db import transaction
 from django.contrib import messages
+from django.urls import path
+from django.shortcuts import render
+from django.utils.html import format_html
 from .models import User, Student, Warden, Security, GatePass, ParentVerification, Notification
+from .bulk_import import StudentBulkImporter, GatePassBulkImporter
+import tempfile
+import os
 
 
 @admin.register(User)
@@ -38,6 +44,93 @@ class StudentAdmin(admin.ModelAdmin):
     list_filter = ('user__gender', 'user__is_approved')
     search_fields = ('student_name', 'hall_ticket_no', 'parent_name', 'parent_mobile')
     readonly_fields = ('username_format',)
+    change_list_template = 'admin/gatepass/student_changelist.html'
+    
+    def get_urls(self):
+        """Add bulk import URL"""
+        urls = super().get_urls()
+        custom_urls = [
+            path('bulk-import/', self.admin_site.admin_view(self.bulk_import_view), name='gatepass_student_bulk_import'),
+        ]
+        return custom_urls + urls
+    
+    def changelist_view(self, request, extra_context=None):
+        """Add bulk import button to changelist"""
+        extra_context = extra_context or {}
+        extra_context['has_bulk_import'] = True
+        return super().changelist_view(request, extra_context)
+    
+    def bulk_import_view(self, request):
+        """Handle bulk import of students"""
+        try:
+            if request.method == 'POST':
+                if 'file' not in request.FILES:
+                    messages.error(request, 'No file uploaded. Please select an Excel or CSV file.')
+                    return render(request, 'admin/gatepass/bulk_import.html', {'title': 'Bulk Import Students'})
+                
+                uploaded_file = request.FILES['file']
+                
+                # Validate file extension
+                valid_extensions = ['.xlsx', '.xls', '.csv']
+                file_ext = os.path.splitext(uploaded_file.name)[1].lower()
+                if file_ext not in valid_extensions:
+                    messages.error(request, f'Invalid file format. Accepted formats: {", ".join(valid_extensions)}')
+                    return render(request, 'admin/gatepass/bulk_import.html', {'title': 'Bulk Import Students'})
+                
+                # Save uploaded file temporarily
+                tmp_path = None
+                try:
+                    with tempfile.NamedTemporaryFile(delete=False, suffix=file_ext) as tmp_file:
+                        for chunk in uploaded_file.chunks():
+                            tmp_file.write(chunk)
+                        tmp_path = tmp_file.name
+                    
+                    # Import students
+                    importer = StudentBulkImporter(tmp_path)
+                    success = importer.import_students()
+                    
+                    # Display results
+                    if success:
+                        messages.success(
+                            request,
+                            f'✓ {len(importer.successes)} student(s) imported successfully!'
+                        )
+                        # Redirect to changelist
+                        from django.http import HttpResponseRedirect
+                        return HttpResponseRedirect('../')
+                    else:
+                        # Show results with errors
+                        context = {
+                            'title': 'Bulk Import Results - Students',
+                            'successes': importer.successes,
+                            'errors': importer.errors,
+                            'total_rows': len(importer.successes) + len(importer.errors),
+                            'success_count': len(importer.successes),
+                            'error_count': len(importer.errors),
+                            'back_url': '../'
+                        }
+                        return render(request, 'admin/gatepass/bulk_import_results.html', context)
+                    
+                except Exception as import_error:
+                    messages.error(request, f'Import failed: {str(import_error)}')
+                    return render(request, 'admin/gatepass/bulk_import.html', {'title': 'Bulk Import Students'})
+                
+                finally:
+                    # Clean up temporary file
+                    if tmp_path and os.path.exists(tmp_path):
+                        try:
+                            os.remove(tmp_path)
+                        except:
+                            pass
+            
+            return render(request, 'admin/gatepass/bulk_import.html', {
+                'title': 'Bulk Import Students',
+                'instruction': 'Upload an Excel file with student data. Required columns: Student Name, Hall Ticket No, Room No, Gender, Email, Mobile, Parent Name, Parent Mobile, Approved (optional)'
+            })
+        
+        except Exception as e:
+            messages.error(request, f'An error occurred: {str(e)}')
+            return render(request, 'admin/gatepass/bulk_import.html', {'title': 'Bulk Import Students'})
 
 
 @admin.register(Warden)
@@ -68,6 +161,7 @@ class GatePassAdmin(admin.ModelAdmin):
     list_per_page = 50  # Limit items per page to avoid field limit issues
     list_max_show_all = 100  # Maximum number of items to show when "Show all" is clicked
     show_full_result_count = False  # Don't count all items (performance)
+    change_list_template = 'admin/gatepass/gatepass_changelist.html'
     
     fieldsets = (
         ('Student Information', {
@@ -84,6 +178,92 @@ class GatePassAdmin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
     )
+    
+    def get_urls(self):
+        """Add bulk import URL"""
+        urls = super().get_urls()
+        custom_urls = [
+            path('bulk-import/', self.admin_site.admin_view(self.bulk_import_view), name='gatepass_gatepass_bulk_import'),
+        ]
+        return custom_urls + urls
+    
+    def changelist_view(self, request, extra_context=None):
+        """Add bulk import button to changelist"""
+        extra_context = extra_context or {}
+        extra_context['has_bulk_import'] = True
+        return super().changelist_view(request, extra_context)
+    
+    def bulk_import_view(self, request):
+        """Handle bulk import of gatepasses"""
+        try:
+            if request.method == 'POST':
+                if 'file' not in request.FILES:
+                    messages.error(request, 'No file uploaded. Please select an Excel or CSV file.')
+                    return render(request, 'admin/gatepass/bulk_import.html', {'title': 'Bulk Import Gatepasses'})
+                
+                uploaded_file = request.FILES['file']
+                
+                # Validate file extension
+                valid_extensions = ['.xlsx', '.xls', '.csv']
+                file_ext = os.path.splitext(uploaded_file.name)[1].lower()
+                if file_ext not in valid_extensions:
+                    messages.error(request, f'Invalid file format. Accepted formats: {", ".join(valid_extensions)}')
+                    return render(request, 'admin/gatepass/bulk_import.html', {'title': 'Bulk Import Gatepasses'})
+                
+                # Save uploaded file temporarily
+                tmp_path = None
+                try:
+                    with tempfile.NamedTemporaryFile(delete=False, suffix=file_ext) as tmp_file:
+                        for chunk in uploaded_file.chunks():
+                            tmp_file.write(chunk)
+                        tmp_path = tmp_file.name
+                    
+                    # Import gatepasses
+                    importer = GatePassBulkImporter(tmp_path)
+                    success = importer.import_gatepasses()
+                    
+                    # Display results
+                    if success:
+                        messages.success(
+                            request,
+                            f'✓ {len(importer.successes)} gatepass(es) imported successfully!'
+                        )
+                        # Redirect to changelist
+                        from django.http import HttpResponseRedirect
+                        return HttpResponseRedirect('../')
+                    else:
+                        # Show results with errors
+                        context = {
+                            'title': 'Bulk Import Results - Gatepasses',
+                            'successes': importer.successes,
+                            'errors': importer.errors,
+                            'total_rows': len(importer.successes) + len(importer.errors),
+                            'success_count': len(importer.successes),
+                            'error_count': len(importer.errors),
+                            'back_url': '../'
+                        }
+                        return render(request, 'admin/gatepass/bulk_import_results.html', context)
+                    
+                except Exception as import_error:
+                    messages.error(request, f'Import failed: {str(import_error)}')
+                    return render(request, 'admin/gatepass/bulk_import.html', {'title': 'Bulk Import Gatepasses'})
+                
+                finally:
+                    # Clean up temporary file
+                    if tmp_path and os.path.exists(tmp_path):
+                        try:
+                            os.remove(tmp_path)
+                        except:
+                            pass
+            
+            return render(request, 'admin/gatepass/bulk_import.html', {
+                'title': 'Bulk Import Gatepasses',
+                'instruction': 'Upload an Excel or CSV file with gatepass data. Required columns: hall_ticket_no, outing_date, outing_time, expected_return_date, expected_return_time, purpose, status'
+            })
+        
+        except Exception as e:
+            messages.error(request, f'An error occurred: {str(e)}')
+            return render(request, 'admin/gatepass/bulk_import.html', {'title': 'Bulk Import Gatepasses'})
     
     def delete_selected_safe(self, request, queryset):
         """Custom delete action that handles large querysets without hitting field limits"""
