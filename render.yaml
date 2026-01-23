@@ -1,0 +1,48 @@
+services:
+  - type: web
+    name: gatepass-django
+    env: python
+    plan: free
+    rootDir: Gatepass
+    buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate --noinput && python manage.py create_superuser_if_not_exists --noinput
+    startCommand: gunicorn hostel_gatepass.wsgi:application --bind 0.0.0.0:$PORT --workers 1 --threads 2 --timeout 120 --keep-alive 5 --max-requests 1000 --max-requests-jitter 50
+    envVars:
+      - key: DEBUG
+        value: False
+      - key: PYTHON_VERSION
+        value: 3.11.7
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ALLOWED_HOSTS
+        value: ".onrender.com"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: gatepass-db
+          property: connectionString
+      - key: DJANGO_SUPERUSER_USERNAME
+        value: admin
+      - key: DJANGO_SUPERUSER_EMAIL
+        value: admin@hostel.com
+      - key: DJANGO_SUPERUSER_PASSWORD
+        generateValue: true
+      - key: EMAIL_BACKEND
+        value: django.core.mail.backends.smtp.EmailBackend
+      - key: EMAIL_HOST
+        value: smtp.gmail.com
+      - key: EMAIL_PORT
+        value: "587"
+      - key: EMAIL_USE_TLS
+        value: "True"
+      - key: EMAIL_HOST_USER
+        sync: false
+      - key: EMAIL_HOST_PASSWORD
+        sync: false
+      - key: DEFAULT_FROM_EMAIL
+        sync: false
+
+databases:
+  - name: gatepass-db
+    plan: free
+    databaseName: gatepass
+    user: gatepass_user
+
