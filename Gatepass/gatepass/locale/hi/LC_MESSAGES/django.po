@@ -1,0 +1,140 @@
+# Hindi (हिंदी) translations for gatepass.
+# Copyright (C) 2025
+# This file is distributed under the same license as the gatepass project.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-02-01 12:00+0000\n"
+"PO-Revision-Date: 2025-02-01 12:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: Hindi\n"
+"Language: hi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Hostel Gatepass System"
+msgstr "हॉस्टल गेटपास सिस्टम"
+
+msgid "Dashboard"
+msgstr "डैशबोर्ड"
+
+msgid "Request Gatepass"
+msgstr "गेटपास अनुरोध"
+
+msgid "Notifications"
+msgstr "सूचनाएं"
+
+msgid "View all"
+msgstr "सभी देखें"
+
+msgid "No new notifications"
+msgstr "कोई नई सूचना नहीं"
+
+msgid "Logout"
+msgstr "लॉग आउट"
+
+msgid "Login"
+msgstr "लॉग इन"
+
+msgid "English"
+msgstr "अंग्रेज़ी"
+
+msgid "Improved UI • Faster workflows • Accessible by design"
+msgstr "बेहतर UI • तेज़ वर्कफ़्लो • डिज़ाइन के अनुसार सुलभ"
+
+msgid "Home"
+msgstr "होम"
+
+msgid "Fast, transparent and secure gatepass workflow for hostels."
+msgstr "हॉस्टल के लिए तेज़, पारदर्शी और सुरक्षित गेटपास वर्कफ़्लो।"
+
+msgid "Explore roles"
+msgstr "भूमिकाएं देखें"
+
+msgid "Student"
+msgstr "छात्र"
+
+msgid "Register and request gatepass for outings."
+msgstr "आउटिंग के लिए पंजीकरण करें और गेटपास अनुरोध करें।"
+
+msgid "Register"
+msgstr "पंजीकरण"
+
+msgid "Warden"
+msgstr "वार्डन"
+
+msgid "Approve gatepass requests from students."
+msgstr "छात्रों से गेटपास अनुरोधों को स्वीकृति दें।"
+
+msgid "Security"
+msgstr "सुरक्षा"
+
+msgid "Manage gate access and final approvals."
+msgstr "गेट एक्सेस और अंतिम स्वीकृति प्रबंधित करें।"
+
+msgid "Super Admin"
+msgstr "सुपर एडमिन"
+
+msgid "Manage all users and system settings."
+msgstr "सभी उपयोगकर्ताओं और सिस्टम सेटिंग्स को प्रबंधित करें।"
+
+msgid "Admin Login"
+msgstr "एडमिन लॉगिन"
+
+msgid "How It Works"
+msgstr "यह कैसे काम करता है"
+
+msgid "1. Student Registration"
+msgstr "1. छात्र पंजीकरण"
+
+msgid "Students register with their details and wait for admin approval."
+msgstr "छात्र अपने विवरण के साथ पंजीकरण करते हैं और एडमिन स्वीकृति की प्रतीक्षा करते हैं।"
+
+msgid "Students submit gatepass requests with outing details."
+msgstr "छात्र आउटिंग विवरण के साथ गेटपास अनुरोध जमा करते हैं।"
+
+msgid "3. Approval Process"
+msgstr "3. स्वीकृति प्रक्रिया"
+
+msgid "Warden and Security approve requests in sequence."
+msgstr "वार्डन और सुरक्षा अनुरोधों को क्रम में स्वीकृति देते हैं।"
+
+msgid "Security Dashboard"
+msgstr "सुरक्षा डैशबोर्ड"
+
+msgid "Approve student exits and record their returns."
+msgstr "छात्र निकासी को स्वीकृति दें और उनके वापसी रिकॉर्ड करें।"
+
+msgid "Waiting for Exit"
+msgstr "निकासी की प्रतीक्षा"
+
+msgid "Students Out"
+msgstr "छात्र बाहर"
+
+msgid "Returned Today"
+msgstr "आज वापस आए"
+
+msgid "Your Shift"
+msgstr "आपकी शिफ्ट"
+
+msgid "Search Students"
+msgstr "छात्र खोजें"
+
+msgid "Search by student name, hall ticket, room number, or purpose..."
+msgstr "छात्र नाम, हॉल टिकट, कमरा नंबर या उद्देश्य से खोजें..."
+
+msgid "Search"
+msgstr "खोजें"
+
+msgid "Clear"
+msgstr "साफ़ करें"
+
+msgid "All Records Displayed:"
+msgstr "सभी रिकॉर्ड प्रदर्शित:"
+
+msgid "All student exit and return records are shown below (no limit). Use search above to filter if needed."
+msgstr "सभी छात्र निकासी और वापसी रिकॉर्ड नीचे दिखाए गए हैं (कोई सीमा नहीं)। फ़िल्टर करने के लिए ऊपर खोज का उपयोग करें।"

@@ -1,0 +1,140 @@
+# Telugu (తెలుగు) translations for gatepass.
+# Copyright (C) 2025
+# This file is distributed under the same license as the gatepass project.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-02-01 12:00+0000\n"
+"PO-Revision-Date: 2025-02-01 12:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: Telugu\n"
+"Language: te\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Hostel Gatepass System"
+msgstr "హాస్టల్ గేట్‌పాస్ సిస్టమ్"
+
+msgid "Dashboard"
+msgstr "డాష్‌బోర్డ్"
+
+msgid "Request Gatepass"
+msgstr "గేట్‌పాస్ అభ్యర్థన"
+
+msgid "Notifications"
+msgstr "నోటిఫికేషన్లు"
+
+msgid "View all"
+msgstr "అన్నీ చూడండి"
+
+msgid "No new notifications"
+msgstr "కొత్త నోటిఫికేషన్లు లేవు"
+
+msgid "Logout"
+msgstr "లాగ్ అవుట్"
+
+msgid "Login"
+msgstr "లాగిన్"
+
+msgid "English"
+msgstr "ఇంగ్లీష్"
+
+msgid "Improved UI • Faster workflows • Accessible by design"
+msgstr "మెరుగైన UI • వేగవంతమైన వర్క్‌ఫ్లోలు • డిజైన్ ద్వారా యాక్సెసిబుల్"
+
+msgid "Home"
+msgstr "హోమ్"
+
+msgid "Fast, transparent and secure gatepass workflow for hostels."
+msgstr "హాస్టల్‌లకు వేగవంతమైన, పారదర్శకమైన మరియు సురక్షిత గేట్‌పాస్ వర్క్‌ఫ్లో."
+
+msgid "Explore roles"
+msgstr "పాత్రలను అన్వేషించండి"
+
+msgid "Student"
+msgstr "విద్యార్థి"
+
+msgid "Register and request gatepass for outings."
+msgstr "బయటకు వెళ్లడానికి నమోదు చేసుకోండి మరియు గేట్‌పాస్ అభ్యర్థించండి."
+
+msgid "Register"
+msgstr "నమోదు"
+
+msgid "Warden"
+msgstr "వార్డన్"
+
+msgid "Approve gatepass requests from students."
+msgstr "విద్యార్థుల నుండి గేట్‌పాస్ అభ్యర్థనలను ఆమోదించండి."
+
+msgid "Security"
+msgstr "భద్రత"
+
+msgid "Manage gate access and final approvals."
+msgstr "గేట్ యాక్సెస్ మరియు చివరి ఆమోదాలను నిర్వహించండి."
+
+msgid "Super Admin"
+msgstr "సూపర్ అడ్మిన్"
+
+msgid "Manage all users and system settings."
+msgstr "అన్ని వినియోగదారులు మరియు సిస్టమ్ సెట్టింగ్‌లను నిర్వహించండి."
+
+msgid "Admin Login"
+msgstr "అడ్మిన్ లాగిన్"
+
+msgid "How It Works"
+msgstr "ఇది ఎలా పనిచేస్తుంది"
+
+msgid "1. Student Registration"
+msgstr "1. విద్యార్థి నమోదు"
+
+msgid "Students register with their details and wait for admin approval."
+msgstr "విద్యార్థులు తమ వివరాలతో నమోదు చేసుకొని అడ్మిన్ ఆమోదానికి వేచి ఉంటారు."
+
+msgid "Students submit gatepass requests with outing details."
+msgstr "విద్యార్థులు బయట వివరాలతో గేట్‌పాస్ అభ్యర్థనలను సమర్పిస్తారు."
+
+msgid "3. Approval Process"
+msgstr "3. ఆమోద ప్రక్రియ"
+
+msgid "Warden and Security approve requests in sequence."
+msgstr "వార్డన్ మరియు భద్రత వరుసగా అభ్యర్థనలను ఆమోదిస్తారు."
+
+msgid "Security Dashboard"
+msgstr "భద్రత డాష్‌బోర్డ్"
+
+msgid "Approve student exits and record their returns."
+msgstr "విద్యార్థి నిష్క్రమణలను ఆమోదించండి మరియు వారి తిరిగి రాకలను రికార్డ్ చేయండి."
+
+msgid "Waiting for Exit"
+msgstr "నిష్క్రమణకు వేచి ఉంది"
+
+msgid "Students Out"
+msgstr "విద్యార్థులు బయట"
+
+msgid "Returned Today"
+msgstr "ఈ రోజు తిరిగి వచ్చారు"
+
+msgid "Your Shift"
+msgstr "మీ షిఫ్ట్"
+
+msgid "Search Students"
+msgstr "విద్యార్థులను శోధించండి"
+
+msgid "Search by student name, hall ticket, room number, or purpose..."
+msgstr "విద్యార్థి పేరు, హాల్ టికెట్, గది నంబర్ లేదా ఉద్దేశం ద్వారా శోధించండి..."
+
+msgid "Search"
+msgstr "శోధించండి"
+
+msgid "Clear"
+msgstr "క్లియర్"
+
+msgid "All Records Displayed:"
+msgstr "అన్ని రికార్డ్‌లు ప్రదర్శించబడ్డాయి:"
+
+msgid "All student exit and return records are shown below (no limit). Use search above to filter if needed."
+msgstr "అన్ని విద్యార్థి నిష్క్రమణ మరియు తిరిగి రాక రికార్డ్‌లు క్రింద చూపించబడ్డాయి (పరిమితి లేదు). అవసరమైతే ఫిల్టర్ చేయడానికి పైన శోధనను ఉపయోగించండి."

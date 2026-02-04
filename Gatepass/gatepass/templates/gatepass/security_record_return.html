@@ -1,0 +1,84 @@
+{% extends 'gatepass/base.html' %}
+
+{% block title %}Record Student Return - Hostel Gatepass System{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+
+            <div class="text-center mb-4">
+                <h1 class="fw-bolder"><i class="fas fa-house-user me-2"></i>Record Student Return</h1>
+                <p class="text-muted fs-5">Confirm student identity and record their return.</p>
+            </div>
+
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-body p-4 p-md-5">
+
+                    <!-- Student & Gatepass Info -->
+                    <div class="row g-4 align-items-center mb-4">
+                        <div class="col-md-4 text-center">
+                            {% if gatepass.photo %}
+                                <img src="{{ gatepass.photo.url }}" alt="Student Photo" class="img-fluid rounded-circle mb-3" style="max-width: 200px; max-height: 200px; object-fit: cover; border: 4px solid #0d6efd;">
+                            {% else %}
+                                <i class="fas fa-user-circle fa-9x text-primary"></i>
+                            {% endif %}
+                            <h3 class="fw-bold mt-3 mb-1">{{ gatepass.student.student_name }}</h3>
+                            <p class="text-muted mb-1">{{ gatepass.student.hall_ticket_no }}</p>
+                            <span class="badge bg-light text-dark fs-6">Room: {{ gatepass.student.room_no }}</span>
+                        </div>
+
+                        <div class="col-md-8">
+                            <h4 class="fw-bold text-primary mb-3">Gatepass Summary</h4>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item px-0 py-2 d-flex justify-content-between">
+                                    <span class="text-muted">Purpose</span>
+                                    <strong class="text-dark">{{ gatepass.purpose }}</strong>
+                                </li>
+                                <li class="list-group-item px-0 py-2 d-flex justify-content-between">
+                                    <span class="text-muted">Left At</span>
+                                    <strong class="text-dark">{{ gatepass.outing_date }} {{ gatepass.outing_time|time:"g:i A" }}</strong>
+                                </li>
+                                <li class="list-group-item px-0 py-2 d-flex justify-content-between">
+                                    <span class="text-muted">Expected Return</span>
+                                    <strong class="text-danger">{{ gatepass.expected_return_date }} {{ gatepass.expected_return_time|time:"g:i A" }}</strong>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <!-- Return Form -->
+                    <div>
+                        <h4 class="fw-bold text-success mb-3"><i class="fas fa-edit me-2"></i>Confirmation Form</h4>
+                        <div class="alert alert-info border-info mb-4">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>Automatic Time Capture:</strong> The exact return date and time will be automatically recorded when you confirm the return.
+                        </div>
+                        <form method="post" class="needs-validation" novalidate>
+                            {% csrf_token %}
+                            
+                            <div class="mt-3">
+                                <label for="{{ form.return_notes.id_for_label }}" class="form-label fw-bold"><i class="fas fa-sticky-note me-1"></i> Return Notes (Optional)</label>
+                                {{ form.return_notes }}
+                                <div class="form-text">Note any issues (e.g., late return, student's condition).</div>
+                            </div>
+
+                            <div class="d-grid gap-3 mt-4">
+                                <button type="submit" class="btn btn-success btn-lg fw-bold fs-5">
+                                    <i class="fas fa-check-circle me-2"></i>Confirm & Record Return
+                                </button>
+                                <a href="{% url 'security_dashboard' %}" class="btn btn-outline-secondary btn-lg">
+                                    <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

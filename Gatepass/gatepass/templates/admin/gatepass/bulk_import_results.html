@@ -1,0 +1,137 @@
+{% extends "admin/base_site.html" %}
+
+{% block title %}{{ title }} - Admin{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <h1>{{ title }}</h1>
+    
+    <div class="module" style="margin-bottom: 20px;">
+        <h2>Import Summary</h2>
+        <div style="padding: 20px; background-color: #f5f5f5;">
+            <div style="margin-bottom: 15px;">
+                <strong>Total Rows Processed:</strong> {{ total_rows }}
+            </div>
+            <div style="margin-bottom: 15px;">
+                <span style="color: #28a745; font-size: 18px; font-weight: bold;">✓ Successfully Imported:</span> 
+                <span style="font-size: 18px;">{{ success_count }}</span>
+            </div>
+            <div style="margin-bottom: 15px;">
+                <span style="color: #dc3545; font-size: 18px; font-weight: bold;">✗ Errors:</span> 
+                <span style="font-size: 18px;">{{ error_count }}</span>
+            </div>
+        </div>
+    </div>
+    
+    {% if successes %}
+    <div class="module" style="margin-bottom: 20px;">
+        <h2>Successfully Imported Records ({{ success_count }})</h2>
+        <table style="width: 100%; border-collapse: collapse;">
+            <tr style="background-color: #e8f5e9; border-bottom: 2px solid #4caf50;">
+                {% if successes.0.username %}
+                    <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Username</th>
+                {% endif %}
+                {% if successes.0.student_name %}
+                    <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Student Name</th>
+                {% endif %}
+                {% if successes.0.hall_ticket_no %}
+                    <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Hall Ticket</th>
+                {% endif %}
+                {% if successes.0.outing_date %}
+                    <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Outing Date</th>
+                {% endif %}
+                {% if successes.0.status %}
+                    <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Status</th>
+                {% endif %}
+            </tr>
+            {% for item in successes %}
+            <tr style="border-bottom: 1px solid #ddd;" {% cycle 'style="background-color: #fff;"' 'style="background-color: #f9f9f9;"' %}>
+                {% if item.username %}
+                    <td style="padding: 12px; border: 1px solid #ddd;">{{ item.username }}</td>
+                {% endif %}
+                {% if item.student_name %}
+                    <td style="padding: 12px; border: 1px solid #ddd;">{{ item.student_name }}</td>
+                {% endif %}
+                {% if item.hall_ticket_no %}
+                    <td style="padding: 12px; border: 1px solid #ddd;">{{ item.hall_ticket_no }}</td>
+                {% endif %}
+                {% if item.outing_date %}
+                    <td style="padding: 12px; border: 1px solid #ddd;">{{ item.outing_date }}</td>
+                {% endif %}
+                {% if item.status %}
+                    <td style="padding: 12px; border: 1px solid #ddd;">{{ item.status }}</td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    {% endif %}
+    
+    {% if errors %}
+    <div class="module" style="margin-bottom: 20px;">
+        <h2>Errors ({{ error_count }})</h2>
+        <div style="padding: 15px; background-color: #fff3cd; border: 1px solid #ffc107; border-radius: 4px;">
+            <ul style="margin: 0; padding-left: 20px;">
+                {% for error in errors %}
+                <li style="margin-bottom: 8px; color: #856404;">{{ error }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    {% endif %}
+    
+    <div class="submit-row" style="padding: 20px; text-align: center; border-top: 1px solid #ddd; background-color: #f8f8f8;">
+        {% if back_url %}
+            <a href="{{ back_url }}" class="button default">Back to List</a>
+        {% else %}
+            <a href="../" class="button default">Back to Admin</a>
+        {% endif %}
+        <a href="" class="button">Perform Another Import</a>
+    </div>
+</div>
+
+<style>
+    .module {
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+    
+    .module h2 {
+        padding: 10px 15px;
+        background-color: #417690;
+        color: white;
+        margin: 0;
+        border-bottom: 1px solid #ddd;
+        font-size: 16px;
+    }
+    
+    table {
+        margin: 0;
+    }
+    
+    th {
+        font-weight: bold;
+        color: #333;
+    }
+    
+    td {
+        vertical-align: middle;
+    }
+    
+    .submit-row .button {
+        margin: 0 5px;
+        padding: 8px 15px;
+        cursor: pointer;
+        border-radius: 4px;
+        border: 1px solid #417690;
+        background-color: #417690;
+        color: white;
+        text-decoration: none;
+        display: inline-block;
+    }
+    
+    .submit-row .button:hover {
+        background-color: #2c5aa0;
+    }
+</style>
+{% endblock %}
